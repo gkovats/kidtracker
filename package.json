@@ -1,0 +1,28 @@
+{
+  "name": "kidtracker",
+  "version": "0.1.0",
+  "description": "Kid Tracker application, for tracking and charting behavior and accomplishments week to week.",
+  "main": "app.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gkovats/kidtracker.git"
+  },
+  "author": "George Kovats <kovatsgeorge@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gkovats/kidtracker/issues"
+  },
+  "homepage": "https://github.com/gkovats/kidtracker#readme",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "config": "^1.26.1",
+    "express": "^4.15.4",
+    "method-override": "^2.3.9",
+    "moment": "^2.18.1",
+    "morgan": "^1.8.2",
+    "sequelize": "^4.4.2"
+  }
+}
