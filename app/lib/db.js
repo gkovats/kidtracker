@@ -1,5 +1,9 @@
 var Sequelize   = require('sequelize');
 var config      = require('config');
-var sequelize   = new Sequelize(config.db.dbname, config.db.user, config.db.password, {"dialect": "mysql"});
+var dbOptions   = {dialect: "mysql", timestamps: true};
 
-module.exports = sequelize;
+if (config.db.host) {
+    dbOptions.host = config.db.host; 
+}
+
+module.exports = new Sequelize(config.db.dbname, config.db.user, config.db.password, dbOptions);
