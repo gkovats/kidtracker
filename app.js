@@ -19,12 +19,12 @@ app.use(bodyParser.urlencoded({'extended':'true'}));    // parse application/x-w
 app.use(bodyParser.json());                             // parse JSON  
 
 // trim whitespace on all POSTed data
-app.use(function(req, res, next){
+/*app.use(function(req, res, next){
     req.body = _.object(_.map(req.body, function (value, key) {
         return [key, value.trim()];
     }));
     next();
-});
+});*/
 
 // Logger config
 

@@ -20,9 +20,9 @@ exports.cleanData = function(data, publicFields) {
     for (var key in data) {
         if(publicFields.indexOf(key) < 0) {
             delete data[key];
-        } else {
-            data[key] = data[key].trim()
+        } else if (typeof data[key] === 'string') {
+            data[key] = data[key].trim();
         }
     }
     return data;
-}
+};

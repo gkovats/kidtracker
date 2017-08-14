@@ -1,5 +1,5 @@
 /**
- * User model
+ * Action model
  */
 
 var Sequelize   = require('sequelize');     
@@ -10,71 +10,77 @@ var AppError    = require('../lib/appError');   // custom error class
 var utils       = require('../lib/utils');      // utility library
 
 // define errors 
-const ERR_GENERAL           = 1000;
-const ERR_BAD_EMAIL         = 1001;
-const ERR_DUPLICATE_EMAIL   = 1003;
-const ERR_BAD_ID            = 1005;
-const ERR_BAD_COUNT         = 1007;
-const ERR_BAD_START         = 1009;
-const ERR_BAD_FIELD         = 1011;
-const ERR_BAD_ORDER         = 1013;
-const ERR_NOT_FOUD          = 1015;
+const ERR_GENERAL           = 1200;
+const ERR_BAD_EMAIL         = 1201;
+const ERR_DUPLICATE_EMAIL   = 1203;
+const ERR_BAD_ID            = 1205;
+const ERR_BAD_COUNT         = 1207;
+const ERR_BAD_START         = 1209;
+const ERR_BAD_FIELD         = 1211;
+const ERR_BAD_ORDER         = 1213;
+const ERR_NOT_FOUD          = 1215;
 
 
-var User = db.define('User', {
-    name    : { 
-        type            : Sequelize.STRING(250), 
+/**
+
+CREATE TABLE `Action` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime DEFAULT NULL,
+  `actionId` int(11) unsigned NOT NULL,
+  `kidId` int(11) unsigned NOT NULL,
+  `name` varchar(100) DEFAULT NULL,
+  `description` varchar(2000) DEFAULT NULL,
+  `value` int(11) DEFAULT '0',
+  `icon` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`) USING BTREE,
+  KEY `action` (`actionId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ */
+
+var Action = db.define('Action', {
+    familyId        : {
+        type            : Sequelize.INTEGER, 
         allowNull       : false
     },
-    email   : { 
-        type            : Sequelize.STRING(250),
-        validate        : {
-            isEmail     : true,
-        },
+    kidId           : {
+        type            : Sequelize.INTEGER, 
         allowNull       : false
     },
-    emailConfirm : { 
-        type            : Sequelize.STRING(6),
-        validate        : {
-            isAlphanumeric  : true
-        }
+    name            : { 
+        type            : Sequelize.STRING(100)
     },
-    hash    : { 
-        type            : Sequelize.STRING(32),
-        validate        : {
-            isAlphanumeric  : true
-        }
+    description     : { 
+        type            : Sequelize.STRING(2000)
     },
-    familyId : { 
-        type            : Sequelize.INTEGER
-    },
-    status  : { 
-        type            : Sequelize.INTEGER,
-        allowNull       : false, 
+    value           : { 
+        type            : Sequelize.INTEGER, 
+        allowNull       : false,
         defaultValue    : 0
     },
-    loginAttempts  : { 
-        type            : Sequelize.INTEGER,
-        defaultValue    : 0
+    icon            : { 
+        type            : Sequelize.STRING(10)
     }
 },{
     freezeTableName: true,
-    tableName: 'User'
+    tableName: 'Action'
 });
 
-exports.updateableFields = ['name', 'email', 'status'];
-exports.publicFields = ['id', 'name', 'email', 'familyId', 'status'];
+exports.updateableFields = ['familyId', 'kidId', 'name', 'description', 'value', 'icon'];
+exports.publicFields = ['id', 'familyId', 'kidId', 'name', 'description', 'value', 'icon'];
 exports.orderField = 'name';
 
 /**
  * Perform creation of this table
  */
 exports.install = function() {
-    return User.sync();
+    return Action.sync();
 };
 
 /**
- * Get users
+ * Get actions
  */
 exports.index = function(count, start, orderby, order) {
 
@@ -101,16 +107,15 @@ exports.index = function(count, start, orderby, order) {
             return reject(new AppError("Requested start isn't valid.", ERR_BAD_START));
         }
 
-        // email must be unique
-        User.findAll({
+        Action.findAll({
             offset: start, 
             limit: count,
             order: [[orderby, order]]
-        }).then(function(users){
-            if (!users) {
-                return reject(new AppError("No users found.", ERR_GENERAL));
+        }).then(function(actions){
+            if (!actions) {
+                return reject(new AppError("No actions found.", ERR_GENERAL));
             }
-            return resolve(users);
+            return resolve(actions);
         }).catch(function(err){
             return reject(new AppError(err.name + ": " + err.message, err.code || ERR_GENERAL));
         });
@@ -120,7 +125,7 @@ exports.index = function(count, start, orderby, order) {
 };
 
 /**
- * Insert User
+ * Insert Action
  */
 exports.get = function(id) {
     
@@ -129,17 +134,17 @@ exports.get = function(id) {
         
         // some checks
         if (isNaN(id) || typeof id !== 'number' || id < 1) {
-            return reject(new AppError("User id isn't valid.", ERR_BAD_ID));
+            return reject(new AppError("Action id isn't valid.", ERR_BAD_ID));
         }
 
-        // email must be unique
-        User.findOne({
+        // action must exist
+        Action.findOne({
             where: {id: id}
-        }).then(function(user){
-            if (!user) {
-                return reject(new AppError(utils.sprintf("No user found by id %d.", id), ERR_NOT_FOUD));
+        }).then(function(action){
+            if (!action) {
+                return reject(new AppError(utils.sprintf("No action found by id %d.", id), ERR_NOT_FOUD));
             }
-            return resolve(user);
+            return resolve(action);
         }).catch(function(err){
             return reject(new AppError(err.name + ": " + err.message, err.code || ERR_GENERAL));
         });
@@ -149,36 +154,13 @@ exports.get = function(id) {
 };
 
 /**
- * Insert User
+ * Insert Action
  */
 exports.insert = function(data) {
     
     return new Promise(function(resolve, reject){
-        
-        // some checks
-        if (!validator.isEmail(data.email)) {
-            return reject(new AppError(
-                "Email is not a valid address.", 
-                ERR_BAD_EMAIL
-            ));
-        }
-        
-        // email must be unique
-        User.count({
-            where: {
-                email: data.email
-            }
-        }).then(function(count){
-            // if we've got matching emails, reject
-            if (count) {
-                return reject(new AppError(
-                    "Email is already in use. Please log in with your existing account.", 
-                    ERR_BAD_EMAIL
-                ));
-            }
-            return User.create(data);
-        }).then(function(user){
-            return resolve(user);
+        Action.create(data).then(function(action){
+            return resolve(action);
         }).catch(function(err){
             return reject(new AppError(err.name + ": " + err.message, err.code || ERR_GENERAL));
         });
@@ -187,9 +169,9 @@ exports.insert = function(data) {
 };
 
 /**
- * Update a user record
+ * Update a action record
  * 
- * @param number id   User ID 
+ * @param number id   Action ID 
  * @param object data Array of fields to update
  * @returns Promise
  */
@@ -197,25 +179,16 @@ exports.update = function(id, data) {
     
     return new Promise(function(resolve, reject){
         
-        // some checks
-        if (!validator.isEmail(data.email)) {
-            return reject(new AppError(
-                    "Email is not a valid address.", 
-                    ERR_BAD_EMAIL
-            ));
-        }
-        
-        // email must be unique
-        User.count({
+        Action.count({
             where: {
                 id: id
             }
         }).then(function(count){
-            // if we've got matching emails, reject
+            // if we didn't find the requested action, reject
             if (!count) {
-                return reject(new AppError(utils.sprintf("No user found by id %d.", id), ERR_NOT_FOUD));
+                return reject(new AppError(utils.sprintf("No action found by id %d.", id), ERR_NOT_FOUD));
             }
-            return User.update(data, {
+            return Action.update(data, {
                 where: {id: id}
             });
         }).then(function(result){
@@ -228,9 +201,9 @@ exports.update = function(id, data) {
 };
 
 /**
- * Delete a user record
+ * Delete a action record
  * 
- * @param number id   User ID 
+ * @param number id   Action ID 
  * @param object data Array of fields to update
  * @returns Promise
  */
@@ -238,17 +211,17 @@ exports.delete = function(id, data) {
     
     return new Promise(function(resolve, reject){
         
-        // user must exist
-        User.count({
+        // action must exist
+        Action.count({
             where: {
                 id: id
             }
         }).then(function(count){
-            // if no user found, can't delete
+            // if no action found, can't delete
             if (!count) {
-                return reject(new AppError(utils.sprintf("No user found by id %d.", id), ERR_NOT_FOUD));
+                return reject(new AppError(utils.sprintf("No action found by id %d.", id), ERR_NOT_FOUD));
             }
-            return User.destroy({
+            return Action.destroy({
                 where: {id: id}
             });
         }).then(function(result){
@@ -267,11 +240,11 @@ exports.delete = function(id, data) {
     return db.transaction(function (t) {
 
         // chain all your queries here. make sure you return them.
-        return User.create(data, {transaction: t});
+        return Action.create(data, {transaction: t});
 
     }).then(function (result) {
         
-        logger.info('Model user insert passed: ');
+        logger.info('Model action insert passed: ');
         
         return callback(result);
         // Transaction has been committed
@@ -279,7 +252,7 @@ exports.delete = function(id, data) {
         // transaction callback
     }).catch(function (err) {
         
-        logger.info('Model user insert failed: ');
+        logger.info('Model action insert failed: ');
         return callback(err);
         // Transaction has been rolled back
         // err is whatever rejected the promise chain returned to the

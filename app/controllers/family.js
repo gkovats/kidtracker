@@ -1,28 +1,28 @@
 /**
- * User controller
+ * Family controller
  */
 
 var env         = process.env.NODE_ENV || 'development';
-var User        = require('../models/user');
+var Family      = require('../models/family');
 var logger      = require('../lib/logger');
 var controller  = require('./base');
 var utils       = require('../lib/utils');      // utility library
 
 
 /**
- * Get users
+ * Get families
  */
 exports.index = function(req, res, next) {
 
-    User.index(req.query.count, req.query.start, req.query.orderby, req.query.order).then(function(users){
+    Family.index(req.query.count, req.query.start, req.query.orderby, req.query.order).then(function(families){
         // return only public fields
         var i = 0;
-        for (i; i < users.length; i++) {
-            users[i] = controller.cleanData(users[i].dataValues, User.publicFields);
+        for (i; i < families.length; i++) {
+            families[i] = controller.cleanData(families[i].dataValues, Family.publicFields);
         } 
         return res.json({
             success: true,
-            data: users
+            data: families
         });
     }).catch(function(err){
         return controller.error(res, err);
@@ -31,13 +31,13 @@ exports.index = function(req, res, next) {
 };
 
 /**
- * Get user
+ * Get family
  */
 exports.get = function(req, res, next) {
-    User.get(req.params.id).then(function(user){
+    Family.get(req.params.id).then(function(family){
         return res.json({
             success: true,
-            data: user
+            data: family
         });
     }).catch(function(err){
         return controller.error(res, err);
@@ -46,15 +46,15 @@ exports.get = function(req, res, next) {
 };
 
 /**
- * Create user
+ * Create family
  */
 exports.insert = function(req, res, next) {
-    var data = controller.cleanData(req.body, User.updateableFields);
-    User.insert(data).then(function(user){
+    var data = controller.cleanData(req.body, Family.updateableFields);
+    Family.insert(data).then(function(family){
         return res.json({
             success : true,
-            msg     : utils.sprintf("User '%s' was successfully created.", user.email),
-            data    : controller.cleanData(user, User.publicFields)
+            msg     : utils.sprintf("Family '%s' was successfully created.", family.name),
+            data    : controller.cleanData(family.dataValues, Family.publicFields)
         });
     }).catch(function(err){
         return controller.error(res, err);
@@ -63,14 +63,14 @@ exports.insert = function(req, res, next) {
 };
 
 /**
- * Update user
+ * Update family
  */
 exports.update = function(req, res, next) {
-    var data = controller.cleanData(req.body, User.updateableFields);
-    User.update(req.params.id, data).then(function(user){
+    var data = controller.cleanData(req.body, Family.updateableFields);
+    Family.update(req.params.id, data).then(function(family){
         return res.json({
             success : true,
-            msg     : utils.sprintf("User '%d' has been udpated.", req.params.id)
+            msg     : utils.sprintf("Family '%d' has been udpated.", req.params.id)
         });
     }).catch(function(err){
         return controller.error(res, err);
@@ -79,13 +79,13 @@ exports.update = function(req, res, next) {
 };
 
 /**
- * Delete user
+ * Delete family
  */
 exports.delete = function(req, res, next) {
-    User.delete(req.params.id).then(function(user){
+    Family.delete(req.params.id).then(function(family){
         return res.json({
             success : true,
-            msg     : utils.sprintf("User '%d' has been deleted.", req.params.id)
+            msg     : utils.sprintf("Family '%d' has been deleted.", req.params.id)
         });
     }).catch(function(err){
         return controller.error(res, err);
