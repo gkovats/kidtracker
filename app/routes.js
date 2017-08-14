@@ -16,8 +16,11 @@ module.exports = function attachHandlers(app) {
     });
 
     // USERS
-    app.post('/user', user.insert);
-    app.get('/user/:id', user.get);
+    // @TODO: add authentication, ME routes
     app.get('/users', user.index);
+    app.get('/user/:id', user.get);
+    app.post('/user', user.insert);
+    app.post('/user/:id', user.update);
+    app.delete('/user/:id', user.delete);
     
 };

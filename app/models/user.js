@@ -8,7 +8,6 @@ var logger      = require('../lib/logger');     // Logger instance
 var validator   = require('validator');         // https://www.npmjs.com/package/validator
 var AppError    = require('../lib/appError');   // custom error class
 var utils       = require('../lib/utils');      // utility library
-var _           = require('underscore');        // utility library
 
 // define errors 
 const ERR_GENERAL           = 1000;
@@ -19,6 +18,7 @@ const ERR_BAD_COUNT         = 1007;
 const ERR_BAD_START         = 1009;
 const ERR_BAD_FIELD         = 1011;
 const ERR_BAD_ORDER         = 1013;
+const ERR_NOT_FOUD          = 1015;
 
 
 var User = db.define('User', {
@@ -33,14 +33,23 @@ var User = db.define('User', {
         allowNull       : false
     },
     email   : { 
-        type            : Sequelize.STRING(250), 
+        type            : Sequelize.STRING(250),
+        validate        : {
+            isEmail     : true,
+        },
         allowNull       : false
     },
     emailConfirm : { 
-        type            : Sequelize.STRING(6)
+        type            : Sequelize.STRING(6),
+        validate        : {
+            isAlphanumeric  : true
+        }
     },
     hash    : { 
-        type            : Sequelize.STRING(32)
+        type            : Sequelize.STRING(32),
+        validate        : {
+            isAlphanumeric  : true
+        }
     },
     familyId : { 
         type            : Sequelize.INTEGER
@@ -75,10 +84,10 @@ exports.index = function(count, start, orderby, order) {
     return new Promise(function(resolve, reject){
 
         // orderby field has to be valid
-        if (_.indexOf(exports.publicFields, orderby) < 0) {
+        if (exports.publicFields.indexOf(orderby) < 0) {
             return reject(new AppError("Orderby field not valid.", ERR_BAD_FIELD));
         }
-        if (_.indexOf(['ASC', 'DESC'], order) < 0) {
+        if (['ASC', 'DESC'].indexOf(order) < 0) {
             return reject(new AppError("Order value not valid.", ERR_BAD_ORDER));
         }
         
@@ -92,7 +101,6 @@ exports.index = function(count, start, orderby, order) {
 
         // email must be unique
         User.findAll({
-            attributes : exports.publicFields, // only return public fields
             offset: start, 
             limit: count,
             order: [[orderby, order]]
@@ -124,11 +132,10 @@ exports.get = function(id) {
 
         // email must be unique
         User.findOne({
-            attributes : publicFields, // only return public fields
             where: {id: id}
         }).then(function(user){
             if (!user) {
-                return reject(new AppError(utils.sprintf("No user found by id %d.", id), ERR_GENERAL));
+                return reject(new AppError(utils.sprintf("No user found by id %d.", id), ERR_NOT_FOUD));
             }
             return resolve(user);
         }).catch(function(err){
@@ -153,7 +160,7 @@ exports.insert = function(data) {
                 ERR_BAD_EMAIL
             ));
         }
-
+        
         // email must be unique
         User.count({
             where: {
@@ -168,8 +175,82 @@ exports.insert = function(data) {
                 ));
             }
             return User.create(data);
+        }).then(function(user){
+            return resolve(user);
+        }).catch(function(err){
+            return reject(new AppError(err.name + ": " + err.message, err.code || ERR_GENERAL));
+        });
+    });
+          
+};
+
+/**
+ * Update a user record
+ * 
+ * @param number id   User ID 
+ * @param object data Array of fields to update
+ * @returns Promise
+ */
+exports.update = function(id, data) {
+    
+    return new Promise(function(resolve, reject){
+        
+        // some checks
+        if (!validator.isEmail(data.email)) {
+            return reject(new AppError(
+                    "Email is not a valid address.", 
+                    ERR_BAD_EMAIL
+            ));
+        }
+        
+        // email must be unique
+        User.count({
+            where: {
+                id: id
+            }
+        }).then(function(count){
+            // if we've got matching emails, reject
+            if (!count) {
+                return reject(new AppError(utils.sprintf("No user found by id %d.", id), ERR_NOT_FOUD));
+            }
+            return User.update(data, {
+                where: {id: id}
+            });
         }).then(function(result){
-            return resolve(utils.sprintf("User '%s' created.", data.email));
+            return resolve(result);
+        }).catch(function(err){
+            return reject(new AppError(err.name + ": " + err.message, err.code || ERR_GENERAL));
+        });
+    });
+    
+};
+
+/**
+ * Delete a user record
+ * 
+ * @param number id   User ID 
+ * @param object data Array of fields to update
+ * @returns Promise
+ */
+exports.delete = function(id, data) {
+    
+    return new Promise(function(resolve, reject){
+        
+        // user must exist
+        User.count({
+            where: {
+                id: id
+            }
+        }).then(function(count){
+            // if no user found, can't delete
+            if (!count) {
+                return reject(new AppError(utils.sprintf("No user found by id %d.", id), ERR_NOT_FOUD));
+            }
+            return User.destroy({
+                where: {id: id}
+            });
+        }).then(function(result){
+            return resolve(result);
         }).catch(function(err){
             return reject(new AppError(err.name + ": " + err.message, err.code || ERR_GENERAL));
         });
