@@ -1,16 +1,11 @@
 {
-
     "logger"    : {
         "level" : "debug"
     },
-    
     "port"      : 3000,
-    
-    // DB Properties
     "db"        : {
         "dbname"    : "kidtracker",
         "user"      : "user",
         "password"  : "password"
-    }    
-	
+    }
 }

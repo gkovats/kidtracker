@@ -1,34 +1,38 @@
 {
-  "name": "kidtracker",
-  "version": "0.1.0",
-  "description": "Kid Tracker application, for tracking and charting behavior and accomplishments week to week.",
-  "main": "app.js",
-  "directories": {
-    "doc": "docs"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/gkovats/kidtracker.git"
-  },
-  "author": "George Kovats <kovatsgeorge@gmail.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/gkovats/kidtracker/issues"
-  },
-  "homepage": "https://github.com/gkovats/kidtracker#readme",
-  "dependencies": {
-    "body-parser": "^1.17.2",
-    "config": "^1.26.1",
-    "express": "^4.15.4",
-    "method-override": "^2.3.9",
-    "moment": "^2.18.1",
-    "morgan": "^1.8.2",
-    "mysql2": "^1.4.0",
-    "passport": "^0.3.2",
-    "passport-remember-me": "0.0.1",
-    "sequelize": "^4.4.2",
-    "underscore": "^1.8.3",
-    "validator": "^8.0.0",
-    "winston": "^2.3.1"
-  }
+    "name": "kidtracker",
+    "version": "0.1.0",
+    "description": "Kid Tracker application, for tracking and charting behavior and accomplishments week to week.",
+    "main": "app.js",
+    "scripts": {
+        "start:dev": "export NODE_ENV=development && nodemon"
+    },
+    "directories": {
+        "doc": "docs"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/gkovats/kidtracker.git"
+    },
+    "author": "George Kovats <kovatsgeorge@gmail.com>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/gkovats/kidtracker/issues"
+    },
+    "homepage": "https://github.com/gkovats/kidtracker#readme",
+    "dependencies": {
+        "body-parser": "^1.17.2",
+        "config": "^1.26.1",
+        "express": "^4.15.4",
+        "faker": "^4.1.0",
+        "method-override": "^2.3.9",
+        "moment": "^2.18.1",
+        "morgan": "^1.8.2",
+        "mysql2": "^1.4.0",
+        "passport": "^0.3.2",
+        "passport-remember-me": "0.0.1",
+        "sequelize": "^4.4.2",
+        "underscore": "^1.8.3",
+        "validator": "^8.0.0",
+        "winston": "^2.3.1"
+    }
 }
