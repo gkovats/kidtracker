@@ -18,7 +18,7 @@ exports.index = function(req, res, next) {
         var i = 0;
         for (i; i < actions.length; i++) {
             actions[i] = controller.cleanData(actions[i].dataValues, Action.publicFields);
-        } 
+        }
         return res.json({
             success: true,
             data: actions
@@ -26,7 +26,7 @@ exports.index = function(req, res, next) {
     }).catch(function(err){
         return controller.error(res, err);
     });
-    
+
 };
 
 /**
@@ -41,7 +41,7 @@ exports.get = function(req, res, next) {
     }).catch(function(err){
         return controller.error(res, err);
     });
-    
+
 };
 
 /**
@@ -58,7 +58,7 @@ exports.insert = function(req, res, next) {
     }).catch(function(err){
         return controller.error(res, err);
     });
-    
+
 };
 
 /**
@@ -74,7 +74,7 @@ exports.update = function(req, res, next) {
     }).catch(function(err){
         return controller.error(res, err);
     });
-    
+
 };
 
 /**
@@ -89,5 +89,5 @@ exports.delete = function(req, res, next) {
     }).catch(function(err){
         return controller.error(res, err);
     });
-    
+
 };

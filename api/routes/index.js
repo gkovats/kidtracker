@@ -4,19 +4,16 @@
 
 module.exports = function attachHandlers(app) {
 
-    var logger  = require('./lib/logger');
+    var logger  = require('../lib/logger');
     var config  = require('config');
-    var user    = require('./controllers/user');
-    var kid     = require('./controllers/kid');
-    var action  = require('./controllers/action');
-    var family  = require('./controllers/family');
-    var system  = require('./controllers/system');
-    
+    var user    = require('../controllers/user');
+    var kid     = require('../controllers/kid');
+    var action  = require('../controllers/action');
+    var family  = require('../controllers/family');
+    var system  = require('../controllers/system');
+
     logger.info("Loading routes...", config);
-    
-    app.get('/', function (req, res) {
-        res.send('Hello World!');
-    });
+
 
     // SYSTEM
     // @TODO: add authentication
@@ -29,7 +26,7 @@ module.exports = function attachHandlers(app) {
     app.post('/api/api/user', user.insert);
     app.post('/api/user/:id', user.update);
     app.delete('/api/user/:id', user.delete);
-    
+
     // KIDS
     // @TODO: add authentication, ME routes
     app.get('/api/kids', kid.index);
@@ -37,7 +34,7 @@ module.exports = function attachHandlers(app) {
     app.post('/api/kid', kid.insert);
     app.post('/api/kid/:id', kid.update);
     app.delete('/api/kid/:id', kid.delete);
-    
+
     // FAMILIES
     // @TODO: add authentication, ME routes
     app.get('/api/families', family.index);
@@ -53,5 +50,14 @@ module.exports = function attachHandlers(app) {
     app.post('/api/action', action.insert);
     app.post('/api/action/:id', action.update);
     app.delete('/api/action/:id', action.delete);
-    
+
+    app.all('*', function (req, res) {
+        return res.status(400).json({
+            success : false,
+            msg     : "This is not a supported API route.",
+            code    : 0
+        });
+    });
+
+
 };
