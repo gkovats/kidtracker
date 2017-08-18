@@ -1,59 +1,49 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+
+const UserLink = props => {
+    const user = props.user;
+    return (<li><Link to={`/user/${user.id}`}>{user.name}</Link> - {user.email}</li>);
+};
+
 export class Users extends React.Component {
 
-    // this.users = Object.keys(this.state.users).map((content, idx) => {
-    //     // const items = this.state.person.loc[content].map((item, i) => (
-    //     //     <p key={i}>{item.text}</p>
-    //     // ))
-    //     console.info("Content: ", content, idx);
-    //
-    //     return (
-    //         <h2> User </h2>
-    //     );
-    // })
-
     constructor(props) {
-      super(props);
-      var self = this;
-      self.state = { users: [] };
-      fetch('/users')
-          .then(res => res.json())
-          .then(function (res) {
-              console.log(res);
-              if (res.data) {
-                  self.state = { users: res.data };
-              }
-          });
-    }
+        super(props);
+        const self      = this;
+        const perPage   = 10;
+        const page      = parseInt(props.match.params.page, 0) || 1;
+        const start     = (page - 1) * perPage;
+        this.state      = {users: []};
 
-    componentWillMount() {
-        console.log(this.props);
+        fetch(`/users?start=${start}&count=${perPage}`)
+            .then(res => res.json())
+            .then(function (res) {
+                if (res.data) {
+                    self.setState({users: res.data})
+                }
+            });
+
     }
 
     componentDidMount() {
-        var self = this;
-        fetch('/users')
-            .then(res => res.json())
-            .then(function (res) {
-                console.log(res);
-                if (res.data) {
-                    self.state = { users: res.data };
-                }
-            });
 
     }
 
     render() {
         return (
             <div className="page-users">
-                <h1>HOME</h1>
+                <h1>USERS</h1>
                 <p>
                     <Link to="/">Go back to the main page</Link>
                 </p>
                 <ul>
-                    {this.state.users.length}
+                {
+                    this.state.users.length && this.state.users.map(
+                        user => <UserLink key={user.id} user={user} />
+                    )
+                }
                 </ul>
             </div>
         );

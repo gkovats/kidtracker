@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router, Link, Switch, Route } from 'react-router-dom';
 import { Home } from './Home';
 import { Users } from './Users';
+import { User } from './User';
 import { NotFoundPage } from './NotFoundPage';
 import '../_/css/App.css';
 
@@ -21,14 +22,15 @@ class App extends Component {
                             <Link to={`/users`}>Users</Link>
                         </li>
                     </header>
-                    <p className="App-intro">
-                        To get started, edit <code>src/App.js</code> and save to reload.
-                    </p>
-                    <Switch>
-                        <Route exact path="/" component={Home} />
-                        <Route exact path="/users" component={Users} />
-                        <Route component={NotFoundPage} />
-                    </Switch>
+                    <section id="body">
+                        <Switch>
+                            <Route exact path="/" component={Home} />
+                            <Route path="/users/:page" component={Users} />
+                            <Route exact path="/users" component={Users} />
+                            <Route path="/user/:userId" component={User} />
+                            <Route component={NotFoundPage} />
+                        </Switch>
+                    </section>
                 </div>
             </Router>
         );
