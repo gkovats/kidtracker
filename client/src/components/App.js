@@ -4,7 +4,6 @@ import { Home } from './Home';
 import { Users } from './Users';
 import { User } from './User';
 import { NotFoundPage } from './NotFoundPage';
-import '../_/css/App.css';
 
 class App extends Component {
     render() {
