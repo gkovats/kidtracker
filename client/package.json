@@ -1,18 +1,27 @@
 {
-    "name": "client",
-    "version": "0.1.0",
-    "private": true,
-    "dependencies": {
-        "react": "^15.6.1",
-        "react-dom": "^15.6.1",
-        "react-router-dom": "^4.1.2",
-        "react-scripts": "1.0.11"
-    },
-    "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test --env=jsdom",
-        "eject": "react-scripts eject"
-    },
-    "proxy": "http://localhost:3001"
+  "name": "client",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "css-loader": "^0.28.5",
+    "extract-text-webpack-plugin": "^3.0.0",
+    "node-sass": "^4.5.3",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-router-dom": "^4.1.2",
+    "react-scripts": "1.0.11",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.18.2",
+    "webpack": "^3.5.5",
+    "webpack-dev-server": "^2.7.1"
+  },
+  "devDependencies": {
+  },
+  "scripts": {
+    "start": "node_modules/.bin/react-scripts start",
+    "build": "node_modules/.bin/react-scripts build",
+    "test": "node_modules/.bin/react-scripts test --env=jsdom",
+    "eject": "node_modules/.bin/react-scripts eject"
+  },
+  "proxy": "http://localhost:3001"
 }
