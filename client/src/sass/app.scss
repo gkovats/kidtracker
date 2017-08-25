@@ -1,9 +1,5 @@
 html {
   background: #FFF;
-
-  #root {
-    text-align: center;
-  }
 }
 
 
@@ -14,7 +10,20 @@ header {
   color: white;
 }
 
-label {
-    font-weight: bold;
-    padding: 0 10px;
+#root {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: #CCC;
+  padding: 0;
+}
+
+#navbar {
+  background: #DDD;
+  text-align: left;
+}
+
+#content {
+  background: #EEF;
+  padding: 0;
+  margin: 0;
 }
